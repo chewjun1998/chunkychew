@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chuncky Cookie | Premium Pre-Order</title>
+    
+    <!-- External Assets -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:wght@900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --cookie-cream: #FDF5E6;
+            --cookie-brown: #6F4E37;
+            --dark-choco: #3C2A21;
+            --accent-soft: #D2691E;
+        }
+
+        body {
+            background-color: var(--cookie-cream);
+            font-family: 'Montserrat', sans-serif;
+            color: var(--dark-choco);
+        }
+
+        h1, h2 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .cookie-card {
+            background: white;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid rgba(111, 78, 55, 0.1);
+        }
+
+        .cookie-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(60, 42, 33, 0.1);
+        }
+
+        .btn-primary {
+            background-color: var(--cookie-brown);
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--dark-choco);
+            transform: scale(1.02);
+        }
+
+        .btn-whatsapp {
+            background-color: #25D366;
+            transition: all 0.3s;
+        }
+
+        .btn-whatsapp:hover {
+            background-color: #128C7E;
+            transform: scale(1.02);
+        }
+
+        .qty-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--cookie-brown);
+            color: var(--cookie-brown);
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .qty-btn:hover {
+            background: var(--cookie-brown);
+            color: white;
+        }
+
+        /* Datepicker Customization */
+        .flatpickr-day.selected {
+            background: var(--cookie-brown) !important;
+            border-color: var(--cookie-brown) !important;
+        }
+
+        #confirmation-screen {
+            display: none;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <!-- Main Container -->
+    <div id="main-app" class="max-w-3xl mx-auto">
+        
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <h1 class="text-5xl md:text-6xl text-brown-800 mb-2" style="color: var(--dark-choco);">Chuncky Cookie</h1>
+            <p class="text-lg opacity-80 italic">Handcrafted warmth in every bite.</p>
+        </header>
+
+        <!-- Menu Section -->
+        <section class="mb-12">
+            <h2 class="text-2xl mb-6 border-b-2 border-amber-200 pb-2">Select Your Cookies</h2>
+            <div class="grid gap-6">
+                
+                <!-- Item 1: Chuncky OG -->
+                <div class="cookie-card p-6 rounded-2xl flex items-center justify-between">
+                    <div>
+                        <h3 class="text-xl font-bold">Chuncky OG</h3>
+                        <p class="text-accent-soft font-semibold">RM 10.50</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <button onclick="updateQty('og', -1)" class="qty-btn">−</button>
+                        <span id="qty-og" class="text-xl font-bold w-6 text-center">0</span>
+                        <button onclick="updateQty('og', 1)" class="qty-btn">+</button>
+                    </div>
+                </div>
+
+                <!-- Item 2: Nutella -->
+                <div class="cookie-card p-6 rounded-2xl flex items-center justify-between">
+                    <div>
+                        <h3 class="text-xl font-bold">Nutella</h3>
+                        <p class="text-accent-soft font-semibold">RM 12.00</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <button onclick="updateQty('nutella', -1)" class="qty-btn">−</button>
+                        <span id="qty-nutella" class="text-xl font-bold w-6 text-center">0</span>
+                        <button onclick="updateQty('nutella', 1)" class="qty-btn">+</button>
+                    </div>
+                </div>
+
+                <!-- Item 3: Smores -->
+                <div class="cookie-card p-6 rounded-2xl flex items-center justify-between">
+                    <div>
+                        <h3 class="text-xl font-bold">Smores</h3>
+                        <p class="text-accent-soft font-semibold">RM 12.00</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <button onclick="updateQty('smores', -1)" class="qty-btn">−</button>
+                        <span id="qty-smores" class="text-xl font-bold w-6 text-center">0</span>
+                        <button onclick="updateQty('smores', 1)" class="qty-btn">+</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Order Summary Sticky Bar -->
+        <div class="bg-white p-6 rounded-2xl shadow-lg border-2 border-amber-100 mb-12 sticky top-4 z-10">
+            <div class="flex justify-between items-center">
+                <span class="text-lg font-bold">Total Amount:</span>
+                <span id="total-price" class="text-3xl font-black text-brown-800">RM 0.00</span>
+            </div>
+        </div>
+
+        <!-- Details Form -->
+        <section class="bg-white p-8 rounded-3xl shadow-sm border border-stone-100">
+            <h2 class="text-2xl mb-6">Pickup Details</h2>
+            
+            <form id="orderForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-bold mb-1">Full Name *</label>
+                    <input type="text" id="name" required class="w-full p-3 rounded-lg border border-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-bold mb-1">Phone Number *</label>
+                        <input type="tel" id="phone" placeholder="0123456789" required class="w-full p-3 rounded-lg border border-stone-300">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-1">Email Address *</label>
+                        <input type="email" id="email" required class="w-full p-3 rounded-lg border border-stone-300">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold mb-1">Pickup Date (Wed/Fri Only) *</label>
+                    <input type="text" id="pickup-date" placeholder="Select a date..." required class="w-full p-3 rounded-lg border border-stone-300 bg-white cursor-pointer">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold mb-1">Special Notes (Optional)</label>
+                    <textarea id="notes" rows="3" class="w-full p-3 rounded-lg border border-stone-300"></textarea>
+                </div>
+
+                <button type="submit" class="w-full btn-primary text-white font-bold py-4 rounded-xl text-lg mt-4 shadow-lg">
+                    Submit Pre-Order
+                </button>
+            </form>
+        </section>
+        
+        <footer class="mt-12 text-center text-stone-500 text-sm pb-8">
+            &copy; 2026 Chuncky Cookie. All Rights Reserved.
+        </footer>
+    </div>
+
+    <!-- Confirmation Screen Overlay -->
+    <div id="confirmation-screen" class="fixed inset-0 bg-white z-50 flex items-center justify-center p-4">
+        <div class="max-w-md w-full text-center">
+            <div class="text-6xl mb-6">🍪</div>
+            <h2 class="text-3xl font-black mb-2" style="color: var(--dark-choco);">Order Form Ready!</h2>
+            <p class="text-stone-600 mb-6">Order ID: <span id="conf-order-id" class="font-bold text-black">#---</span></p>
+            
+            <div class="bg-stone-50 p-6 rounded-2xl text-left mb-6 border border-stone-100">
+                <h4 class="font-bold border-b pb-2 mb-4">Order Summary</h4>
+                <div id="conf-summary" class="space-y-2 mb-4 text-sm"></div>
+                <div class="flex justify-between font-bold text-lg border-t pt-2">
+                    <span>Total Estimated</span>
+                    <span id="conf-total">RM 0.00</span>
+                </div>
+                <div class="mt-4 pt-4 border-t border-dashed">
+                    <p class="text-xs uppercase tracking-widest text-stone-400">Pickup Date</p>
+                    <p id="conf-date" class="font-bold text-amber-800"></p>
+                </div>
+            </div>
+
+            <p class="text-sm text-stone-600 mb-6">
+                To complete your pre-order, click the button below to send your order details straight to our WhatsApp business line.
+            </p>
+
+            <div class="flex flex-col gap-3">
+                <button id="whatsapp-submit-btn" class="w-full btn-whatsapp text-white py-4 rounded-xl font-bold text-lg shadow-md flex items-center justify-center gap-2">
+                    <svg class="w-6 height-6 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.713-1.455L0 24zm6.59-4.846c1.6.95 3.197 1.449 4.815 1.451 5.46.002 9.897-4.437 9.9-9.899.001-2.646-1.02-5.133-2.877-6.99C16.57 1.85 14.085 1.83 11.439 1.83c-5.462 0-9.902 4.44-9.904 9.902-.001 1.748.48 3.454 1.396 4.968l-1.018 3.714 3.824-1.002zM18.5 14.73c-.352-.177-2.083-1.03-2.404-1.147-.32-.117-.553-.176-.785.177-.232.354-.9 1.147-1.102 1.382-.202.236-.404.264-.755.088-.352-.177-1.487-.548-2.832-1.752-1.047-.933-1.753-2.085-1.958-2.44-.205-.353-.022-.544.154-.72.16-.157.352-.412.529-.617.175-.206.234-.353.352-.589.118-.235.06-.441-.03-.617-.09-.177-.785-1.894-1.076-2.597-.283-.683-.571-.59-.785-.601-.202-.01-.433-.01-.664-.01-.23 0-.604.087-.92.433-.317.354-1.21 1.184-1.21 2.886 0 1.701 1.237 3.343 1.411 3.578.173.235 2.434 3.716 5.897 5.21 1.442.622 2.28.825 3.003.882.725.056 1.4.024 1.926-.054.588-.088 2.084-.851 2.376-1.674.292-.823.292-1.53.204-1.677-.088-.148-.32-.236-.673-.413z"/></svg>
+                    Send to WhatsApp
+                </button>
+                <button onclick="window.location.reload()" class="text-stone-500 hover:text-stone-800 text-sm font-semibold underline mt-2">
+                    Edit Order Details
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- State Management ---
+        const menu = {
+            og: { name: "Chuncky Cookie OG", price: 10.50, qty: 0 },
+            nutella: { name: "Nutella Cookie", price: 12.00, qty: 0 },
+            smores: { name: "Smores Cookie", price: 12.00, qty: 0 }
+        };
+
+        // --- Core Functions ---
+        function updateQty(itemId, change) {
+            const item = menu[itemId];
+            const newQty = item.qty + change;
+            
+            if (newQty >= 0) {
+                item.qty = newQty;
+                document.getElementById(`qty-${itemId}`).innerText = newQty;
+                calculateTotal();
+            }
+        }
+
+        function calculateTotal() {
+            let total = 0;
+            for (const key in menu) {
+                total += menu[key].qty * menu[key].price;
+            }
+            document.getElementById('total-price').innerText = `RM ${total.toFixed(2)}`;
+            return total;
+        }
+
+        // --- Datepicker Logic (Restriction) ---
+        flatpickr("#pickup-date", {
+            disableMobile: "true",
+            minDate: "today",
+            dateFormat: "l, d F Y",
+            "enable": [
+                function(date) {
+                    // 3 = Wednesday, 5 = Friday
+                    return (date.getDay() === 3 || date.getDay() === 5);
+                }
+            ],
+            locale: {
+                "firstDayOfWeek": 1 // Start week on Monday
+            }
+        });
+
+        // --- Form Submission & Validation ---
+        document.getElementById('orderForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const total = calculateTotal();
+            const date = document.getElementById('pickup-date').value;
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value;
+            const notes = document.getElementById('notes').value || "None";
+
+            // 1. Validate quantity
+            if (total <= 0) {
+                alert("Please add at least one cookie to your order!");
+                return;
+            }
+
+            // 2. Validate Date
+            if (!date) {
+                alert("Please select a pickup date (Wednesday or Friday).");
+                return;
+            }
+
+            // Generate Mock Order ID
+            const orderId = 'CC-' + Math.floor(1000 + Math.random() * 9000);
+
+            // Populate Confirmation Screen
+            document.getElementById('conf-order-id').innerText = orderId;
+            document.getElementById('conf-total').innerText = `RM ${total.toFixed(2)}`;
+            document.getElementById('conf-date').innerText = date;
+
+            const summaryEl = document.getElementById('conf-summary');
+            summaryEl.innerHTML = '';
+            
+            let itemsTextForWhatsApp = '';
+
+            for (const key in menu) {
+                if (menu[key].qty > 0) {
+                    const qty = menu[key].qty;
+                    const itemName = menu[key].name;
+                    const itemTotal = (qty * menu[key].price).toFixed(2);
+
+                    // Web interface rows
+                    const itemRow = document.createElement('div');
+                    itemRow.className = 'flex justify-between';
+                    itemRow.innerHTML = `<span>${qty}x ${itemName}</span> <span>RM ${itemTotal}</span>`;
+                    summaryEl.appendChild(itemRow);
+
+                    // WhatsApp text formatting
+                    itemsTextForWhatsApp += `- ${qty}x ${itemName} (RM ${itemTotal})\n`;
+                }
+            }
+
+            // Show Confirmation Screen
+            document.getElementById('main-app').style.display = 'none';
+            document.getElementById('confirmation-screen').style.display = 'flex';
+            window.scrollTo(0,0);
+
+            // Setup WhatsApp Send Action
+            document.getElementById('whatsapp-submit-btn').onclick = function() {
+                // Fixed target business number
+                const businessPhoneNumber = '60182914209'; 
+
+                const message = `*🍪 NEW PRE-ORDER [${orderId}]*\n\n` +
+                                `*Customer Details:*\n` +
+                                `• Name: ${name}\n` +
+                                `• Phone: ${phone}\n` +
+                                `• Email: ${email}\n\n` +
+                                `*Order Items:*\n${itemsTextForWhatsApp}\n` +
+                                `*Total Amount:* RM ${total.toFixed(2)}\n\n` +
+                                `*Preferred Pickup Date:*\n📅 ${date}\n\n` +
+                                `*Special Notes:*\n${notes}\n\n` +
+                                `Thank you! Please confirm my pre-order.`;
+
+                const encodedMessage = encodeURIComponent(message);
+                const whatsappUrl = `https://wa.me/${businessPhoneNumber}?text=${encodedMessage}`;
+                
+                // Open WhatsApp chat
+                window.open(whatsappUrl, '_blank');
+            };
+        });
+    </script>
+</body>
+</html>
